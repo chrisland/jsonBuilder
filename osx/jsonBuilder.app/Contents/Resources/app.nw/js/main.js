@@ -128,7 +128,7 @@ var updateJsonByInput = function (dom) {
 var addPair = function (keypath) {
 	alert(keypath);
 	var db = SpahQL.db(_jsonObj);
-	var avatar_large = db.select(keypath).set( 'new', {'gag':'wuff'} );
+	var avatar_large = db.select(keypath).set( 'new', 'a' );
 	renderJsonFromObj(db.sourceData());
 };
 
@@ -153,9 +153,9 @@ var getRow = function (key, obj, parentKeyPath , i,lastRow, _editable) {
 	var newParentKeyPath = parentKeyPath+'/'+key;
 	var tr = jQuery('<tr />');
 	var td_k = jQuery('<td />', {text: key}).appendTo(tr);
-	if (_editable) {
+	/*if (_editable) {
 		td_k.html(getInput(key,'key',newParentKeyPath));
-	}
+	}*/
 	if ( typeof obj === 'object' ) {
 		var td_v = jQuery('<td />');
 		//parentRownr++;
@@ -181,7 +181,7 @@ var getRow = function (key, obj, parentKeyPath , i,lastRow, _editable) {
 	    .on('click', function (e) {
 		    addPair(jQuery(e.currentTarget).data('keypath'));
 	    });
-	    tr.find('td:first input').before(addBtn);
+	    tr.find('td:first').prepend(addBtn);
 	}
 	return tr;	
 };
@@ -193,19 +193,30 @@ var getTable = function () {
 };
 
 var getInput = function(value, type, parentKeyPath) {
+	var span = jQuery('<span />');
 	var dom = jQuery('<input />', {value: value}).data('type',type).data('keypath',parentKeyPath);
 	dom.on('change', function (e) {
 		unsavedShow();
 		updateJsonByInput(e.currentTarget);
 		return false;
 	});
-	var typ = jQuery('<select><option>1</option></select>')
-    //.data('keypath',parentKeyPath)
+	var typ = jQuery('<select><option>string</option><option>obj</option></select>')
+    .data('keypath',parentKeyPath)
     .on('change', function (e) {
-	    alert('jo');
+	    
+	    if (jQuery(e.currentTarget).val() == 'string') {
+		    alert('jo');
+	    } else if (jQuery(e.currentTarget).val() == 'obj') {
+		    //alert('jo2');
+		    var db = SpahQL.db(_jsonObj);
+			var avatar_large = db.select(jQuery(e.currentTarget).data('keypath')).replace( {'gag':'wuff'} );
+			renderJsonFromObj(db.sourceData());
+	    }
+	    return false;
     });
-    dom.after(typ);
-	return dom;
+    span.append(dom);
+    span.append(typ);
+	return span;
 };
 
 /*
