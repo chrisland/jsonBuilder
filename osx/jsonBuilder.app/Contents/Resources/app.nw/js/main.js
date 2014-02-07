@@ -179,7 +179,9 @@ var getRow = function (key, obj, parentKeyPath , i,lastRow, _editable) {
 	    var addBtn = jQuery('<button/>', {text: '+'})
 	    .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
-		    addPair(jQuery(e.currentTarget).data('keypath'));
+	    	jQuery('#overlay_form').fadeIn();
+	    	jQuery('#overlay_form').find('.keypath').val(jQuery(e.currentTarget).data('keypath'));
+		    //addPair(jQuery(e.currentTarget).data('keypath'));
 	    });
 	    tr.find('td:first').prepend(addBtn);
 	}
@@ -231,7 +233,10 @@ function init() {
 	jQuery('#toolbar_open').on('click',toolbar_open);
 	
 	jQuery('#toolbar_save').on('click',toolbar_save);
+	
+	jQuery('#overlay_form').on('click','.submit',submitPair);
 
+	renderJsonFromStr('{"":""}');
 }
 
 init();
