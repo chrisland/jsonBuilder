@@ -1,4 +1,8 @@
 
+// v 0.2
+//
+// begin: 2014-02-10
+
 //alert('jo');
 
 
@@ -150,7 +154,6 @@ var renderJsonFromStr = function (jsonstring) {
 	_jsonObj = pareseJsonToObj(jsonstring);
 	renderJsonFromObj(_jsonObj);
 	history_log(_jsonObj);
-	
 };
 
 /*
@@ -168,24 +171,19 @@ var renderJsonFromObj = function (jsonobj) {
 	_jsonObj = jsonobj
 	//console.log(_jsonObj);
 	
-	//var table = getTable();
-	
 	var dom = jQuery('<span/>');
-	
 	var i = 1;
 	var objSize = Object.size(_jsonObj);
 	Object.keys(_jsonObj).forEach(function(key) {
 	   // console.log(key, _jsonObj[key]);
 	   
 	    dom.append(getRow(key, _jsonObj[key], i, 0, objSize+1, _editable));
-	    
 	    i++;
 	});
-
 	dom = makeTable(dom);
-	
 	jQuery('#content').html('').append(dom);
 };
+
 
 /*
 	pareseJsonToObj
