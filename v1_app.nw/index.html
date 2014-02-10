@@ -13,27 +13,26 @@
 <div id="toolbar">
 	<button id="toolbar_open">Open</button>
 	<button id="toolbar_save">Save<span class="hidden unsaved">[unsaved]</span></button>
-	<button id="toolbar_undo">Undo</button>
-	<button id="toolbar_redo">Redo</button>
 </div>
 
 <textarea id="textarea_jsonstring"></textarea>
 
 <div id="content"></div>
 
-
+<div id="overlay_form" class="hidden">
+	<label>Key</label>
+	<input type="text" class="key" />
+	<br>
+	<label>Value</label>
+	<input type="text" class="value" />	
+	<label>keypath</label>
+	<input type="text" class="keypath" />	
+	<input type="text" class="type" />	
+	<button type="submit" class="submit">Ok</button>
+</div>
 
 <div class="system hidden">
 	<input type="file" id="system_openfile" name="" value="" accept=".json"/>
-	<!--
-
-	<div id="system_newform" class="">
-		<input type="text" class="key" />
-		<input type="text" class="value" />	
-	</div>
-	
--->
-
 </div>
 
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>

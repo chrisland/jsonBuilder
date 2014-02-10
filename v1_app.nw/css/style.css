@@ -21,16 +21,6 @@ html, body {
 }
 
 
-table {
-	border: 2px solid #999;
-	padding: 10px;
-}
-
-.trigger {
-	width: 10px;
-}
-
-
 #toolbar button {
 	padding: 10px;
 }
