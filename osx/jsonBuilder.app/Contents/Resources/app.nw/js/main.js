@@ -397,7 +397,7 @@ var getInput = function(value, type, i, rootRow) {
 	    
 	} else if(type == 'key') {
 	
-		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn hidden'})
+		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn valueBtn_obj hidden'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
@@ -415,7 +415,7 @@ var getInput = function(value, type, i, rootRow) {
 	   // span.append(typ);
 	    span = span.add(typ);
 	    
-	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn hidden'})
+	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn valueBtn_del hidden'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    

@@ -48,7 +48,7 @@ button:disabled {
 }
 
 
-input {
+input, textarea {
 	border: none;
 	background-color: #e9e9e9;
 	transition: all 0.2s ease-in;
@@ -56,7 +56,8 @@ input {
 	margin: 0px;
 }
 
-input:focus, input:active {
+input:focus, input:active
+,textarea:focus, textarea:active {
 	outline: none;
 	background-color: #d4d4d4;
 }
@@ -117,7 +118,11 @@ input:focus, input:active {
 	margin-top: 2%;
 	width: 100%;
 	height: 85%;
+	padding: 5%;
+	resize: none;
 }
+
+
 /*
 
 table {
@@ -144,15 +149,6 @@ tr {
 */
 
 
-
-
-button.touch {
-	background-color: aqua;
-}
-
-
-
-
 #textarea .toolbar {
 	width: 100%;
 }
@@ -160,14 +156,33 @@ button.touch {
 #textarea button {
 	padding: 2%;
 	float: right;
+	margin-left: 1%;
+	margin-top: 1%;
+}
+
+#textarea button.touch {
+	background-color: #9e9e9e;
+	color: #fff; 
+}
+
+#textarea button.touch:hover {
+	color: #dddddd; 
 }
 
 
 
-#content_body span {
-	display: block;
-	width: 100%;
+
+
+
+
+
+
+
+
+#content_body input.trigger {
+	display: none; 
 }
+
 
 #content_body button {
 	min-width: 25px;
@@ -175,58 +190,48 @@ button.touch {
 
 	font-size: 1.05rem;
 }
-#content_body button:hover {
-	color: #0361b9;
-}
+
+
 
 #content_body .valueBtn {
 	float: left; 
 	margin-left: 3%;
-	word-spacing: 1.1rem
+	word-spacing: 1.1rem;
+	top: 100%;
+	position: absolute;
+	right: 0;
+	z-index: 9999999;
+	background-color: #fff;
 }
 
-
-
-#content_body .input {
-	height: 1.5rem;
-	padding-left: 5%; 
-	display: block;
-	float:left;
-	width: 97%;
+#content_body .valueBtn:hover {
+	background-color: #9e9e9e;
+	color: #fff;
 }
 
-/*
-
-#content_body table tr td:nth-child(2) {
-	width: 80%;
+#content_body .valueBtn_del {
+	right: 23%;
 }
 
-#content_body table tr td:nth-child(2) .inputValue {
-	width: 65%;
-}
-
-*/
 
 #content_body .addBtn {
-	/* height: 100%; */
-	
 	height: 1.5rem;
-
 }
 
-#content_body button.addBtn:hover {
+#content_body .addBtn:hover {
 	background-color: #9e9e9e;
 	color: #fff !important;
 }
 
 
-#content_body input.trigger {
-	display: none; 
+#content_body .input {
+	height: 1.5rem;
+	padding-left: 0.5rem; 
+	display: block;
+	float:left;
+	width: 98%;
 }
 
-#content_body .inputKey {
-	
-}
 
 
 #content_body ul {
@@ -245,18 +250,19 @@ button.touch {
 	/* background-color: fuchsia; */
 	float: left;
 	width: 30%;	
+	position: relative;
 }
 
 #content_body .li_second {
 	/* background-color: green; */	
 	float: left;
-	width: 60%;
+	width: 65%;
 }
 
 #content_body .li_third {
 	/* background-color: lime;  */	
 	float: left;
-	width: 10%;
+	width: 3%;
 	height: 100%;
 }
 
