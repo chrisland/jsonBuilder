@@ -1,38 +1,40 @@
 
-// v 0.2
+// v 0.3
 //
-// begin: 2014-02-10
-
-//alert('jo');
+// begin: 2014-02-12
 
 
 var gui = require('nw.gui');
 var win = gui.Window.get();
 win.showDevTools();
-    
-  
+   
+/*
+	GLOBALS
+*/ 
 
-var _editable = true;
- 
-var fs = require('fs');
+var _fs = require('fs');
 
 
-var openpath = undefined;
-var _jsonObj = {}
-var _history = [];
-var _history_open = 0;
+var _editable = true,
+	_openpath = undefined,
+	_jsonObj = {},
+	_history = [],
+	_history_open = 0,
+	_textarea_nice = false,
+	_textarea_encode = false,
+	_trigger_open = jQuery('<input />', {type: 'text', class:'trigger trigger_open',value:'{',readonly: true}),
+	_trigger_close = jQuery('<input />', {type: 'text', class:'trigger trigger_close',value:'}',readonly: true});
 
-var _trigger_open = jQuery('<input />', {type: 'text', class:'trigger trigger_open',value:'{'});
-var _trigger_close = jQuery('<input />', {type: 'text', class:'trigger trigger_close',value:'}'});
 
 Object.size = function(obj) {
     var size = 0, key;
     for (key in obj) {
         if (obj.hasOwnProperty(key)) size++;
     }
-    //alert(size);
     return size-1;
 };
+
+
 
 /*
 	history_log
@@ -42,8 +44,9 @@ var history_log = function (jsonobj) {
 	_history.push(jsonobj);
 	_history_open++;
 	
-	console.log(_history);
-	console.log(_history_open);
+	//console.log(_history);
+	//console.log(_history_open);
+	jQuery('#toolbar_undo').prop('disabled',false);
 };
 
 
@@ -54,8 +57,11 @@ var history_log = function (jsonobj) {
 var history_undo = function () {
 	if (_history_open-1 >= 0) {
 		_history_open = _history_open-1;
-		console.log('render und '+_history_open);
+		//console.log('render und '+_history_open);
 		renderJsonFromObj(_history[_history_open]);
+		jQuery('#toolbar_redo').prop('disabled',false);
+	} else {
+		jQuery('#toolbar_undo').prop('disabled',true);
 	}
 	
 };
@@ -67,8 +73,10 @@ var history_undo = function () {
 var history_redo = function () {
 	if (_history_open+1 <= _history.length-1) {
 		_history_open = _history_open+1;
-		console.log('render  red'+_history_open);
+		//console.log('render  red'+_history_open);
 		renderJsonFromObj(_history[_history_open]);
+	} else {
+		jQuery('#toolbar_redo').prop('disabled',true);
 	}
 };
 
@@ -79,14 +87,14 @@ var history_redo = function () {
 
 var openLocalFile = function(evt) {
 	console.log($(this).val());
-	openpath = $(this).val();
-	fs.readFile(openpath, "utf-8", function (err, data) {
+	_openpath = $(this).val();
+	_fs.readFile(_openpath, "utf-8", function (err, data) {
 		if (err) throw err;
 		//console.log(data);
-		renderJsonFromStr(data);
+		unsavedHide();
+		renderJsonFromStr(data, true);
+		renewTrigger();
 	});
-	
-
 };
 
 
@@ -95,7 +103,7 @@ var openLocalFile = function(evt) {
 */
 
 var unsavedHide = function () {
-	jQuery('#toolbar_save .unsaved').fadeOut();
+	jQuery('#toolbar_save').prop('disabled',true);
 };
 
 /*
@@ -103,7 +111,7 @@ var unsavedHide = function () {
 */
 
 var unsavedShow = function () {
-	jQuery('#toolbar_save .unsaved').fadeIn();
+	jQuery('#toolbar_save').prop('disabled',false);
 };
 
 /*
@@ -111,14 +119,24 @@ var unsavedShow = function () {
 */
 
 var toolbar_save = function (e){
-	if(!openpath) { return false; }
+	if(!_openpath) { return false; }
 	var jsonstring = getJsonString();
-	if(!openpath) { return false; }
-	fs.writeFile(openpath, jsonstring, "utf-8", function (err, data) {
+	_fs.writeFile(_openpath, jsonstring, "utf-8", function (err, data) {
 		if (err) throw err;
 		unsavedHide();
 	});
 }
+
+/*
+	toolbar_new
+*/
+
+var toolbar_new = function (e){
+	unsavedHide();
+	renderJsonFromStr('{"":""}', true);
+	renewTrigger();
+	return false;
+};
 
 /*
 	toolbar_open
@@ -145,45 +163,6 @@ var getJsonString = function () {
 
 
 
-/*
-	renderJsonFromStr
-*/
-
-var renderJsonFromStr = function (jsonstring) {
-	
-	_jsonObj = pareseJsonToObj(jsonstring);
-	renderJsonFromObj(_jsonObj);
-	history_log(_jsonObj);
-};
-
-/*
-	renderJsonFromObj
-*/
-
-var renderJsonFromObj = function (jsonobj) {
-	
-	
-	var str = pareseObjToJson(jsonobj);
-	//alert(str);
-	jQuery('#textarea_jsonstring').text(str);
-	
-	
-	_jsonObj = jsonobj
-	//console.log(_jsonObj);
-	
-	var dom = jQuery('<span/>');
-	var i = 1;
-	var objSize = Object.size(_jsonObj);
-	Object.keys(_jsonObj).forEach(function(key) {
-	   // console.log(key, _jsonObj[key]);
-	   
-	    dom.append(getRow(key, _jsonObj[key], i, 0, objSize+1, _editable));
-	    i++;
-	});
-	dom = makeTable(dom);
-	jQuery('#content').html('').append(dom);
-};
-
 
 /*
 	pareseJsonToObj
@@ -200,20 +179,28 @@ var pareseJsonToObj = function (str) {
 	pareseObjToJson
 */
 
-var pareseObjToJson = function (str) {
-	if (str) {
-		return JSON.stringify(str);
-		//return JSON.stringify(str, null, "\t");
+var pareseObjToJson = function (obj) {
+	if (obj) {
+		if (_textarea_nice) {
+			return JSON.stringify(obj, null, "\t");
+		}
+		return JSON.stringify(obj);
 	}
 	return false;
 };
 
+/*
+	reRenderDom
+*/
 
 var reRenderDom = function () {
+
+	
 	var obj = getJsonFromDom();
 	
 	renderJsonFromObj(obj);
 	history_log(obj);
+	
 	
 };
 
@@ -226,8 +213,8 @@ var getJsonFromDom = function () {
 	
 	var str = '',
 		openPair = true;
-
-	jQuery('#content table').find('input').each(function(i, k){
+	
+	jQuery('#content_body').find('input').each(function(i, k){
 		
 		
 		var typ = jQuery(k).data('type'),
@@ -249,24 +236,69 @@ var getJsonFromDom = function () {
 			str += '"'+val+'":';
 			openPair = true;
 		} else if (typ == 'value') {
-			str += '"'+encodeURIComponent(val)+'"';
+			if (_textarea_encode) {
+				val = encodeURIComponent(val);
+			}
+			str += '"'+val+'"';
 			openPair = false;
 		}
 
 	});
-
-	
 	//console.log(str);
-	//jQuery('#textarea_jsonstring').text(str);
-	
 	var obj = pareseJsonToObj(str);
-	
-	return obj;
-	//console.log(obj);
-	
-	//alert(str);
-	
+	unsavedShow();
+	return obj;	
 };
+
+
+
+/*
+	renderJsonFromStr
+*/
+
+var renderJsonFromStr = function (jsonstring, history) {
+	
+	_jsonObj = pareseJsonToObj(jsonstring);
+	renderJsonFromObj(_jsonObj);
+	if (history == true) {
+		history_log(_jsonObj);
+	}
+};
+
+/*
+	renderJsonFromObj
+*/
+
+var renderJsonFromObj = function (jsonobj) {
+	
+	
+	var str = pareseObjToJson(jsonobj);
+	//alert(str);
+	jQuery('#textarea_jsonstring').text(str);
+	
+	
+	_jsonObj = jsonobj
+	//console.log(_jsonObj);
+	
+	var dom = jQuery();
+	var i = 1;
+	var objSize = Object.size(_jsonObj);
+	Object.keys(_jsonObj).forEach(function(key) {
+	   // console.log(key, _jsonObj[key]);
+	   
+	    dom = dom.add(getRow(key, _jsonObj[key], i, 0, objSize+1, _editable));
+	    i++;
+	});
+	console.log(dom);
+	dom = makeTable(dom);
+	dom = makeTrigger(dom);
+	jQuery('#content_body').html('').append(dom);//.append('<div class="breaker"></div>');
+
+};
+
+
+
+
 
 
 /*
@@ -279,68 +311,61 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 		parentKeyPath += '/';
 	}*/
 	//var newParentKeyPath = parentKeyPath+'/'+key;
-	var tr = jQuery('<tr />');
-	var td_k = jQuery('<td />', {text: key}).appendTo(tr);
+	var tr = jQuery('<li />', {'data-i':i, 'data-rootRow':rootRow, 'data-lastRow':lastRow });
+	var td_k = jQuery('<div />', {text: key, class:"li_first"}).appendTo(tr);
 	if (_editable) {
 		td_k.html(getInput(key,'key', i, rootRow));
 	}
 	if ( typeof obj === 'object' ) {
-		var td_v = jQuery('<td />');
+		var td_v = jQuery('<div />', {class: "li_second"});
 		//parentRownr++;
 		var ia = 0;
 		var objSize = Object.size(obj);
-		var leer = jQuery('<span/>');
+		var leer = jQuery();
 		Object.keys(obj).forEach(function(key) {
-	    	//console.log(key, jsonObj[key]);
-			//parentKeyPath += key;
-			/*var table = getTable();
-			table.append(getRow(key, obj[key], ia, i, objSize, _editable));
-			td_v.append(table);
-			*/
-			leer.append(getRow(key, obj[key], ia, i, objSize, _editable));
+			leer = leer.add(getRow(key, obj[key], ia, i, objSize, _editable));
 			ia++;
 		});
-		td_v.append(makeTable(leer));
+		leer = makeTable(leer);
+		leer = makeTrigger(leer);
+		td_v.append(leer);
 		tr.append(td_v);
 	} else {
-		var td_v = jQuery('<td />', {text: obj}).appendTo(tr);
+		var td_v = jQuery('<div />', {text: obj, class: "li_second"}).appendTo(tr);
 		if (_editable) {
 			td_v.html(getInput(obj,'value', i, rootRow));
 		}
 	}
 	
 	if (_editable && lastRow == i ) {
-		//if (!parentKeyPath) {parentKeyPath='/';}
-	    var addBtn = jQuery('<button/>', {text: '+'})
+
+	    var addBtn = jQuery('<button/>', {text: '+', class: 'addBtn'})
 	    //.data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 	    	
 	    	//alert('jo');
-	    	//var newForm = jQuery('#system_newform').clone();
-	    	/*
-	    	var table = getTable();
-	    	table.append( getRow('', '', i+1, rootRow , lastRow, _editable) );
-	    	jQuery(e.currentTarget).parent().after( table );
-	    	*/
-	    	jQuery(e.currentTarget).parent().find('.trigger_close').remove();
-	    	var row = getRow('', '', i+1, rootRow , lastRow, _editable);
-	    	row.find('input:last').after(_trigger_close.clone());
-	    	jQuery(e.currentTarget).parent().after(row);
 	    	
+	    	var row = getRow('', '', i+1, rootRow , lastRow+1, _editable);
 	    	
-	    	//getJsonFromDom();
-			
+	    	var tr = jQuery(e.currentTarget).parent().parent();
+	    	
+	    	tr.after(row);
+	    	
+	    	renewTrigger();
+	    	
 			reRenderDom();
-			//jQuery(e.currentTarget).after(newForm);
 			
-	    	//showOverlayForm(jQuery(e.currentTarget).data('keypath'));
-	    	
-		    //addPair(jQuery(e.currentTarget).data('keypath'));
 	    });
-	    tr.after().append(addBtn);
+	    
+	    tr.find('.li_second').first().after(jQuery('<div />', {class:"li_third"}).append(addBtn));
 	}
-	
-	return tr;	
+
+
+	tr.find('.input').on('click', function (e) {
+		jQuery('#content_body').find('.valueBtn').hide();
+		jQuery(e.currentTarget).parent().parent().find('.valueBtn').show();
+	});
+	return tr.append(jQuery('<div class="breaker"></div>'));	
 };
 
 
@@ -350,61 +375,67 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 */
 
 var getInput = function(value, type, i, rootRow) {
-	var span = jQuery('<span />');
+	var span = jQuery();
 	var dom = jQuery('<input />', {value: decodeURIComponent(value), class: 'input'}).data('type',type).data('nr',i).data('rootRow',rootRow);
 	dom.on('change', function (e) {
-		//alert('change');
-		//unsavedShow();
-		//updateJsonByInput(e.currentTarget);
 		
-		//getJsonFromDom();
-		
+
 		var obj = getJsonFromDom();
 		history_log(obj);
-	
+		
+		jQuery('#textarea_jsonstring').text(pareseObjToJson(obj));
+		
 		return false;
 	});
-	span.append(dom);
+	
+	span = span.add(dom);
 	
 	
 	if (type == 'value') {
-		var typ = jQuery('<button/>', {text: '{}'})
+		
+	    dom.addClass('inputValue');
+	    
+	} else if(type == 'key') {
+	
+		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn hidden'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
-		   	jQuery(e.currentTarget).parent().find('.input').after( makeTable(getRow('', '', i+1, i , 1, 1)) ).addClass('remove');
-		   	jQuery(e.currentTarget).parent().find('.remove').remove();
-		   //	getJsonFromDom();
+		    //alert('add');
+		   var  leer = makeTable(getRow('', '', i+1, i , 1, 1));
+		    //leer = makeTrigger(leer);
+		   	jQuery(e.currentTarget).parent().parent().find('.inputValue').after( leer ).addClass('remove');
+		   	jQuery('#content_body').find('.remove').remove();
+
+		   	renewTrigger();
+		   	
 		   	reRenderDom();
 		    return false;
 	    });
-	    span.append(typ);
+	   // span.append(typ);
+	    span = span.add(typ);
 	    
-	    var del = jQuery('<button/>', {text: '-'})
+	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn hidden'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
-		   	var tr = jQuery(e.currentTarget).parent().parent().parent();
-		   	if (tr.find('.trigger_close').length > 0) {
-			   	tr.prev().find('input:last').after(_trigger_close.clone());
-		   	}
-		   	if (tr.find('.trigger_open').length > 0) {
-			   	tr.next().find('.input:first').before(_trigger_open.clone());
-		   	}
-		   	
-		   //	alert(tr.parent().find('.input').length);
+		    var tr = jQuery(e.currentTarget).parent().parent();
+		    
 		   	if (tr.parent().find('.input').length > 2) {
 			   	tr.remove();
 		   	} else {
-			   	tr.parent().parent().parent().find('table').after( getInput('', 'value', i, rootRow) );
-			   	tr.parent().parent().parent().find('table').remove();
+			   	tr.parent().parent().parent().find('ul').after( getInput('', 'value', i, rootRow) );
+			   	tr.parent().parent().parent().find('ul').remove();
 		   	}
+		   	renewTrigger();
 		   	
-		   //	getJsonFromDom();
 		   	reRenderDom();
 		    return false;
 	    });
-	    span.append(del);
+	    //span.append(del);
+	    span = span.add(del);
+	    
+		dom.addClass('inputKey');
 	}
 	
     
@@ -419,9 +450,7 @@ var getInput = function(value, type, i, rootRow) {
 
 var getTable = function () {
 	
-	var dom = jQuery('<table />');
-	//dom.append(_trigger_open.clone());
-	//dom.append(_trigger_close.clone());
+	var dom = jQuery('<ul />');
 	return dom;	
 };
 
@@ -431,22 +460,49 @@ var getTable = function () {
 
 var makeTable = function (rows) {
 	
+	
 	var dom = getTable();
 	dom.append(rows);
 	
-	dom.find('input:first').before(_trigger_open.clone());
+	//dom.find('input:first').before(_trigger_open.clone());
 	var last = dom.find('input:last');
 	//.after(_trigger_close.clone());
-	
-	if (last.parent().parent().parent().parent().parent().parent().find('table').length > 0) {
-		last.parent().parent().parent().parent().parent().parent().find('table').after(_trigger_close.clone());
+	/*
+	if (last.parent().parent().find('ul').length > 0) {
+		alert('ups ?');
+		//last.parent().parent().parent().parent().parent().parent().find('table').after(_trigger_close.clone());
 	} else {
-		last.after(_trigger_close.clone());
+		//alert('was ?');
+		//last.after(_trigger_close.clone());
 	}
-   		
-   		
+	*/
+
 	return dom;	
 };
+
+var makeTrigger = function (dom) {
+
+	jQuery(dom).find('.li_first').first().prepend(_trigger_open.clone());	
+	jQuery(dom).find('.li_second').last().append(_trigger_close.clone());
+	return dom;
+};
+
+
+var renewTrigger = function () {
+	
+	jQuery('#content_body').find('.li_first .trigger_open').remove();
+	jQuery('#content_body').find('.li_second .trigger_close').remove();
+	
+	jQuery('#content_body').find('ul').each(function(i, k){
+		var ul = makeTrigger(jQuery(k));
+		jQuery(k).append(ul);
+	});
+	
+	//alert('trigger renew done');
+};
+
+
+
 
 /*
 
@@ -457,6 +513,7 @@ var makeTable = function (rows) {
 function init() {
 
 
+	jQuery('#toolbar_new').on('click',toolbar_new);
 	jQuery('#toolbar_open').on('click',toolbar_open);
 	
 	jQuery('#toolbar_save').on('click',toolbar_save);
@@ -464,9 +521,41 @@ function init() {
 	jQuery('#toolbar_undo').on('click',history_undo);
 	jQuery('#toolbar_redo').on('click',history_redo);
 	
-	//jQuery('#overlay_form').on('click','.submit',submitPair);
+	jQuery('#textarea_nice').on('click',function () {
+		if (_textarea_nice == true) {
+			_textarea_nice = false;
+			jQuery('#textarea_nice').removeClass('touch');
+		} else {
+			_textarea_nice = true;
+			jQuery('#textarea_nice').addClass('touch');
+		}
+		reRenderDom();
+		return false;
+	});
+	
+	jQuery('#textarea_encode').on('click',function () {
+		if (_textarea_encode == true) {
+			_textarea_encode = false;
+			jQuery('#textarea_encode').removeClass('touch');
+		} else {
+			_textarea_encode = true;
+			jQuery('#textarea_encode').addClass('touch');
+		}
+		reRenderDom();
+		return false;
+	});
+	
+	jQuery("#page").split({
+	    orientation: 'vertical',
+	    limit: 70,
+	    position: '20%'
+	});
+	
+	
+	
+	
 
-	renderJsonFromStr('{"":""}');
+	renderJsonFromStr('{"":""}', false);
 }
 
 init();

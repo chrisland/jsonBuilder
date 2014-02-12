@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>jsonBuilder alpha</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link href="css/style.css" rel="stylesheet">
+<link href="css/splitter.css" rel="stylesheet">
+
+
+</head>
+<body>
+<div id="toolbar">
+	<button id="toolbar_new">New</button>
+	<button id="toolbar_open">Open</button>
+	<button id="toolbar_save" disabled>Save</button>
+	<button id="toolbar_undo" disabled>Undo</button>
+	<button id="toolbar_redo" disabled>Redo</button>
+</div>
+
+<div class="page">
+<div id="page" >
+	<div id="textarea" class="side">
+		<div class="content">
+			<div class="toolbar">
+				<button id="textarea_nice">Nicecode</button>
+				<button id="textarea_encode">Encode</button>
+			</div>
+			<textarea id="textarea_jsonstring" readonly></textarea>
+			<div class="breaker"></div>
+		</div>
+	</div>
+	<div id="content" class="side">
+		<div class="content" id="content_body">
+		</div>
+	</div>
+	<div class="breaker"></div>
+</div>
+</div>
+	
+
+<div class="system hidden">
+	<input type="file" id="system_openfile" name="" value="" accept=".json"/>
+</div>
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<!-- <script type="text/javascript" src="jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js"></script> -->
+<script type="text/javascript" src="js/splitter.js"></script>
+<script type="text/javascript" src="js/spahql-min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>
