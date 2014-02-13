@@ -86,7 +86,7 @@ var history_redo = function () {
 */
 
 var openLocalFile = function(evt) {
-	console.log($(this).val());
+	//console.log($(this).val());
 	_openpath = $(this).val();
 	_fs.readFile(_openpath, "utf-8", function (err, data) {
 		if (err) throw err;
@@ -119,7 +119,11 @@ var unsavedShow = function () {
 */
 
 var toolbar_save = function (e){
-	if(!_openpath) { return false; }
+	if(!_openpath) { 
+		//toolbar_saveAs();
+		return false;
+	}
+	alert('save '+_openpath);
 	var jsonstring = getJsonString();
 	_fs.writeFile(_openpath, jsonstring, "utf-8", function (err, data) {
 		if (err) throw err;
@@ -127,11 +131,36 @@ var toolbar_save = function (e){
 	});
 }
 
+
+/*
+	toolbar_save
+*/
+
+var toolbar_saveAs = function (){
+
+	var node = jQuery('#system_savefile');
+	node.on('change', function () {
+		_openpath = $(this).val();
+		
+		if (!_openpath) {
+			return false;
+		}
+
+		//alert('save as '+_openpath);
+		//toolbar_save();
+		return false;
+	});
+	node.trigger('click');
+	return false;
+};
+
+
 /*
 	toolbar_new
 */
 
 var toolbar_new = function (e){
+	_openpath = undefined;
 	unsavedHide();
 	renderJsonFromStr('{"":""}', true);
 	renewTrigger();
@@ -552,8 +581,47 @@ function init() {
 	});
 	
 	
+	jQuery(document).on('keydown',function (e) {
+		//console.log(e);
+		if (e.metaKey) {
+			switch (e.keyCode) {
+				case 78: // n
+					toolbar_new()
+					return false;
+					break;
+				case 87: // w
+					//MYAPP.filesystem.remove();
+					e.preventDefault();
+					return false;
+					break;
+				case 79: // o
+					toolbar_open();
+					break;
+				case 83: // s
+				
+
+					if (e.shiftKey) {
+						toolbar_saveAs();
+					} else {
+						toolbar_save();
+					}
+
+					return true;
+					break;
+				case 90: // z
+				
+					if (e.shiftKey) {
+						history_redo();
+					} else {
+						history_undo();
+					}
+					break;
+			}
+		}
+	});
 	
 	
+	// START BLANK !!!
 
 	renderJsonFromStr('{"":""}', false);
 }

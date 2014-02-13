@@ -1,17 +1,1 @@
-{
-	"name": "FileExplorer3",
-	"description": "Simple%20file%20explorer.",
-	"version": "0.1",
-	"main": "index.html",
-	"window": {
-		"toolbar": "false",
-		"width": "850",
-		"height": "500",
-		"more": {
-			"222": "850",
-			"toolbar": "true",
-			"hei333ght": "500"
-		}
-	},
-	"held": "der"
-}
+{"name":"FileExplorer3333","description":"Simple file explorer.","version":"0.1","main":"index.html","window":{"toolbar":"false","width":"850","height":"500","more":{"222":"850","toolbar":"true","hei333ght":"500"}},"held":"der"}
