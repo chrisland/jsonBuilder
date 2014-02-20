@@ -261,10 +261,13 @@ var getJsonFromDom = function () {
 			str += ',';
 		}
 		
-		if (typ == 'key') {
+		if (jQuery(k).hasClass('inputKey')) {
+	//	if (typ == 'key') {
 			str += '"'+val+'":';
 			openPair = true;
-		} else if (typ == 'value') {
+	//	} else if (typ == 'value') {
+		} else if (jQuery(k).hasClass('inputValue')) {
+			val = val.replace('"','');
 			if (_textarea_encode) {
 				val = encodeURIComponent(val);
 			}
@@ -273,7 +276,7 @@ var getJsonFromDom = function () {
 		}
 
 	});
-	//console.log(str);
+	console.log(str);
 	var obj = pareseJsonToObj(str);
 	unsavedShow();
 	return obj;	
@@ -391,8 +394,8 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 
 
 	tr.find('.input').on('click', function (e) {
-		jQuery('#content_body').find('.valueBtn').hide();
-		jQuery(e.currentTarget).parent().parent().find('.valueBtn').show();
+		jQuery('#content_body').find('.helpers').hide();
+		jQuery(e.currentTarget).parent().parent().find('.helpers').first().show();
 	});
 	return tr.append(jQuery('<div class="breaker"></div>'));	
 };
@@ -414,7 +417,40 @@ var getInput = function(value, type, i, rootRow) {
 		
 		jQuery('#textarea_jsonstring').text(pareseObjToJson(obj));
 		
+	
 		return false;
+	})
+	.on('dblclick', function (e) {
+		//alert('jo');
+		//var str = jQuery(e.currentTarget).val();
+		
+		
+		//jQuery('#content_body').find('.extendDiv').removeClass('extend').prop('disabled',false);
+			
+			
+		if ( jQuery(e.currentTarget).parent().find('.extendDiv').length <= 0 ) {
+			
+			jQuery('#content_body').find('.extendDiv').remove();
+			
+			var str = jQuery(e.currentTarget).val();
+			var extend = jQuery('<div />', {class:'extendDiv'});
+			var textarea = jQuery('<textarea />', {text: str});
+			textarea.on('change', function (e) {
+				jQuery(e.currentTarget).parent().parent().find('.input')
+					.val(jQuery(e.currentTarget).val())
+					.trigger('change');
+			});
+			extend.append(textarea);
+			jQuery(e.currentTarget).after(extend); //.prop('disabled',true);
+			jQuery(e.currentTarget).parent().find('.input').on('change', function (e) {
+				jQuery(e.currentTarget).parent().find('textarea')
+					.val(jQuery(e.currentTarget).val());
+			});
+			
+		} else {
+			
+		}
+		
 	});
 	
 	span = span.add(dom);
@@ -422,18 +458,38 @@ var getInput = function(value, type, i, rootRow) {
 	
 	if (type == 'value') {
 		
-	    dom.addClass('inputValue');
+	    dom.attr('placeholder','Value').addClass('inputValue');
 	    
 	} else if(type == 'key') {
 	
-		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn valueBtn_obj hidden'})
+		var place = jQuery('<div />', {class:'helpers hidden'});
+		
+		
+		var dupli = jQuery('<button/>', {text: 'x2', class: 'valueBtn valueBtn_dupli', tabindex: '-1'})
+	   // .data('keypath',parentKeyPath)
+	    .on('click', function (e) {
+		    
+		    var dom = jQuery(e.currentTarget).parent().parent().parent();
+		    var dom_new = dom.clone();
+		    dom_new.find('.inputKey').val(dom_new.find('.inputKey').val()+'_2');
+		    dom.after(dom_new);
+
+		   	renewTrigger();
+		   	
+		   	reRenderDom();
+		    return false;
+	    });
+		place.append(dupli);
+		
+		
+		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn valueBtn_obj', tabindex: '-1'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
 		    //alert('add');
 		   var  leer = makeTable(getRow('', '', i+1, i , 1, 1));
 		    //leer = makeTrigger(leer);
-		   	jQuery(e.currentTarget).parent().parent().find('.inputValue').after( leer ).addClass('remove');
+		   	jQuery(e.currentTarget).parent().parent().parent().find('.inputValue').after( leer ).addClass('remove');
 		   	jQuery('#content_body').find('.remove').remove();
 
 		   	renewTrigger();
@@ -441,10 +497,10 @@ var getInput = function(value, type, i, rootRow) {
 		   	reRenderDom();
 		    return false;
 	    });
-	   // span.append(typ);
-	    span = span.add(typ);
+		place.append(typ);
+	   // span = span.add(typ);
 	    
-	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn valueBtn_del hidden'})
+	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn valueBtn_del', tabindex: '-1'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
@@ -453,8 +509,8 @@ var getInput = function(value, type, i, rootRow) {
 		   	if (tr.parent().find('.input').length > 2) {
 			   	tr.remove();
 		   	} else {
-			   	tr.parent().parent().parent().find('ul').after( getInput('', 'value', i, rootRow) );
-			   	tr.parent().parent().parent().find('ul').remove();
+			   	tr.parent().parent().parent().parent().find('ul').after( getInput('', 'value', i, rootRow) );
+			   	tr.parent().parent().parent().parent().find('ul').remove();
 		   	}
 		   	renewTrigger();
 		   	
@@ -462,9 +518,12 @@ var getInput = function(value, type, i, rootRow) {
 		    return false;
 	    });
 	    //span.append(del);
-	    span = span.add(del);
+	    //span = span.add(del);
+	    place.append(del);
 	    
-		dom.addClass('inputKey');
+	    span = span.add(place);
+	    
+		dom.attr('placeholder','Key').addClass('inputKey');
 	}
 	
     

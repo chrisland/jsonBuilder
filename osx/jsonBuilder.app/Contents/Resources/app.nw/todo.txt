@@ -1,12 +1,15 @@
 
 - v0.3
 
-encode/decode Button hat ein preoblem mit " im value beim hin und herschalten
-die toolleiste in einen eigenen div und positionieren (beachte parent in functionen)
-toolbar öffner sich bei allen unterelementen von verschatelten obj
-doppelclick auf .input öffnet sich eine größer box darunter bzw input macht sich groß?
-duplizieren von regeln
+
 app menue
+add row : zeige wenn key leer oder doppelt ist
+focus per tab wechsel -> trigger toolbar
 
 done:
 	keyboard shortcuts
+	encode/decode Button hat ein preoblem mit " im value beim hin und herschalten
+	die toolleiste in einen eigenen div und positionieren (beachte parent in functionen)
+	duplizieren von regeln
+	toolbar öffner sich bei allen unterelementen von verschatelten obj
+	doppelclick auf .input öffnet sich eine größer box darunter bzw input macht sich groß?
