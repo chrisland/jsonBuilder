@@ -1,11 +1,26 @@
 {
-  "name": "jsonBuilder",
-  "description": "Simple json Format explorer.",
-  "version": "0.1",
-  "main": "index.html",
-  "window": {
-    "toolbar": false,
-    "width": 850,
-    "height": 500
-  }
+	"name": "jsonBuilder",
+	"description": "Simple json Format explorer.",
+	"version": "0.4",
+	"main": "index.html",
+	"window": {
+		"title":"jsonBuilder",
+		"toolbar": false,
+		"icon": "icon.png",
+		"width": 850,
+		"height": 500,
+		"show": false
+	},
+	"maintainers": 
+		[{
+			"name": "Christian Marienfeld",
+			"email": "jsonbuilder@chrisland.de",
+			"web": "http://jsonbuilder.chrisland.de"
+		}]
+	,
+	"licenses": [{
+			"type": "GPLv3",
+			"url": "http://www.gnu.org/licenses/gpl-3.0.en.html"
+		}
+	]
 }

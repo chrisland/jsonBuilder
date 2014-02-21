@@ -1,10 +1,11 @@
 
+- v0.4
+
+layout
+icons
+
+
 - v0.3
-
-
-app menue
-add row : zeige wenn key leer oder doppelt ist
-focus per tab wechsel -> trigger toolbar
 
 done:
 	keyboard shortcuts
@@ -13,3 +14,13 @@ done:
 	duplizieren von regeln
 	toolbar öffner sich bei allen unterelementen von verschatelten obj
 	doppelclick auf .input öffnet sich eine größer box darunter bzw input macht sich groß?
+	focus per tab wechsel -> trigger toolbar
+	add row : zeige wenn key leer ist
+	app menue (gibs bei osx nicht!)
+
+
+- v2 (TODO)
+	
+suche
+zusammenklappen der listen
+add row : zeige wenn key doppelt ist

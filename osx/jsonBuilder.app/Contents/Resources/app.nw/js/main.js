@@ -1,12 +1,18 @@
 
-// v 0.3
+// v 0.4
 //
-// begin: 2014-02-12
-
+// begin: 2014-02-20
 
 var gui = require('nw.gui');
-var win = gui.Window.get();
-win.showDevTools();
+
+onload = function() {
+	var win = gui.Window.get();
+	win.show();
+	//win.showDevTools();
+}
+
+  
+  
    
 /*
 	GLOBALS
@@ -123,7 +129,7 @@ var toolbar_save = function (e){
 		//toolbar_saveAs();
 		return false;
 	}
-	alert('save '+_openpath);
+	//alert('save '+_openpath);
 	var jsonstring = getJsonString();
 	_fs.writeFile(_openpath, jsonstring, "utf-8", function (err, data) {
 		if (err) throw err;
@@ -199,7 +205,13 @@ var getJsonString = function () {
 
 var pareseJsonToObj = function (str) {
 	if (str) {
-		return JSON.parse(str);
+		
+		try {
+		 return JSON.parse(str);
+		} catch (e) {
+		  console.error("Parsing error:", e); 
+		}
+
 	}
 	return false;
 };
@@ -263,6 +275,7 @@ var getJsonFromDom = function () {
 		
 		if (jQuery(k).hasClass('inputKey')) {
 	//	if (typ == 'key') {
+			
 			str += '"'+val+'":';
 			openPair = true;
 	//	} else if (typ == 'value') {
@@ -271,12 +284,22 @@ var getJsonFromDom = function () {
 			if (_textarea_encode) {
 				val = encodeURIComponent(val);
 			}
-			str += '"'+val+'"';
+			if (val == '') {
+				str += '""';
+			} else {
+				if (isNaN(val)) {
+					str += '"'+val+'"';
+				} else {
+					str += val;
+				}
+			}
+			
+			//str += '"'+val+'"';
 			openPair = false;
 		}
 
 	});
-	console.log(str);
+	//console.log(str);
 	var obj = pareseJsonToObj(str);
 	unsavedShow();
 	return obj;	
@@ -321,14 +344,35 @@ var renderJsonFromObj = function (jsonobj) {
 	    dom = dom.add(getRow(key, _jsonObj[key], i, 0, objSize+1, _editable));
 	    i++;
 	});
-	console.log(dom);
+	//console.log(dom);
 	dom = makeTable(dom);
 	dom = makeTrigger(dom);
+	
+	
+	
+	 
 	jQuery('#content_body').html('').append(dom);//.append('<div class="breaker"></div>');
 
+	
+	moveAddBtn();
+	
 };
 
+jQuery(window).resize(function() {
+	moveAddBtn();
+	//alert('jo');
+});
 
+var moveAddBtn = function () {
+	
+	jQuery('#content_body').find('.li_third').each(function (i,k) {
+		
+		jQuery(k).css('height',jQuery(k).prev('.li_second')[0].scrollHeight );
+		//alert(jQuery(k).prev('.li_second')[0].scrollHeight);
+		
+	});
+	
+};
 
 
 
@@ -376,24 +420,30 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 	    .on('click', function (e) {
 	    	
 	    	//alert('jo');
-	    	
-	    	var row = getRow('', '', i+1, rootRow , lastRow+1, _editable);
-	    	
-	    	var tr = jQuery(e.currentTarget).parent().parent();
-	    	
-	    	tr.after(row);
-	    	
-	    	renewTrigger();
-	    	
-			reRenderDom();
-			
+	    	var inputKey = jQuery(e.currentTarget).parent().parent().find('.li_first');
+	    	var val = inputKey.find('.inputKey').val();
+	    	//alert(val);
+	    	if (val) {
+		    	var row = getRow('', '', i+1, rootRow , lastRow+1, _editable);
+		    	var tr = jQuery(e.currentTarget).parent().parent();
+		    	tr.after(row);
+		    	
+		    	renewTrigger();
+		    	
+				reRenderDom();
+			} else {
+				inputKey.fadeOut(200, function () {
+					inputKey.fadeIn(400);
+				});
+			}
 	    });
-	    
-	    tr.find('.li_second').first().after(jQuery('<div />', {class:"li_third"}).append(addBtn));
+	    var btndom = jQuery('<div />', {class:"li_third"}).append(addBtn);
+	   // btndom.css('height',tr.find('.li_second')[0].scrollHeight );
+	    tr.find('.li_second').first().after(btndom);
 	}
 
 
-	tr.find('.input').on('click', function (e) {
+	tr.find('.input').on('focus', function (e) {
 		jQuery('#content_body').find('.helpers').hide();
 		jQuery(e.currentTarget).parent().parent().find('.helpers').first().show();
 	});
@@ -464,14 +514,39 @@ var getInput = function(value, type, i, rootRow) {
 	
 		var place = jQuery('<div />', {class:'helpers hidden'});
 		
-		
-		var dupli = jQuery('<button/>', {text: 'x2', class: 'valueBtn valueBtn_dupli', tabindex: '-1'})
+		var del = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_del', tabindex: '-1'})
+	   // .data('keypath',parentKeyPath)
+	   .data('icon', '&#xe054;')
+	    .on('click', function (e) {
+		    
+		    var tr = jQuery(e.currentTarget).parent().parent().parent();
+
+			var parentTr = tr.parent();
+			tr.remove();
+			 
+			if (parentTr.find('.input').length < 1) {
+				//alert('jetzt');
+				
+				var input = getInput('', 'value', 0, 0);
+				parentTr.append(input);
+			}
+			
+		   	renewTrigger();
+		   	
+		   	reRenderDom();
+		    return false;
+	    });
+	    //span.append(del);
+	    //span = span.add(del);
+	    place.append(del);
+	    
+		var dupli = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_dupli', tabindex: '-1'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
 		    var dom = jQuery(e.currentTarget).parent().parent().parent();
 		    var dom_new = dom.clone();
-		    dom_new.find('.inputKey').val(dom_new.find('.inputKey').val()+'_2');
+		    dom_new.find('.inputKey').first().val(dom_new.find('.inputKey').val()+'_2');
 		    dom.after(dom_new);
 
 		   	renewTrigger();
@@ -482,7 +557,7 @@ var getInput = function(value, type, i, rootRow) {
 		place.append(dupli);
 		
 		
-		var typ = jQuery('<button/>', {text: '{}', class: 'valueBtn valueBtn_obj', tabindex: '-1'})
+		var typ = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_obj', tabindex: '-1'})
 	   // .data('keypath',parentKeyPath)
 	    .on('click', function (e) {
 		    
@@ -500,26 +575,7 @@ var getInput = function(value, type, i, rootRow) {
 		place.append(typ);
 	   // span = span.add(typ);
 	    
-	    var del = jQuery('<button/>', {text: '-', class: 'valueBtn valueBtn_del', tabindex: '-1'})
-	   // .data('keypath',parentKeyPath)
-	    .on('click', function (e) {
-		    
-		    var tr = jQuery(e.currentTarget).parent().parent();
-		    
-		   	if (tr.parent().find('.input').length > 2) {
-			   	tr.remove();
-		   	} else {
-			   	tr.parent().parent().parent().parent().find('ul').after( getInput('', 'value', i, rootRow) );
-			   	tr.parent().parent().parent().parent().find('ul').remove();
-		   	}
-		   	renewTrigger();
-		   	
-		   	reRenderDom();
-		    return false;
-	    });
-	    //span.append(del);
-	    //span = span.add(del);
-	    place.append(del);
+	    
 	    
 	    span = span.add(place);
 	    
