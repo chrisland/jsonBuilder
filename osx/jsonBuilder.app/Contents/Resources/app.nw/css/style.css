@@ -224,9 +224,11 @@ tr {
 
 
 #content_body .helpers {
-	top: 100%;
+	/*
+top: 100%;
 	position: absolute;
 	left: 0;
+*/
 	z-index: 9999999;
 	width: 98%;
 
@@ -270,6 +272,7 @@ tr {
 }
 
 
+/*
 
 #content_body .addBtn {
 	height: 1.5rem;
@@ -277,6 +280,7 @@ tr {
 	position: absolute;
 	bottom: 0;
 }
+*/
 
 #content_body .addBtn:hover {
 	background-color: #9e9e9e;
@@ -304,28 +308,37 @@ tr {
 	clear: both;
 	width: 100%;
 	padding-bottom: 2%;
+	display:flex;
+	
 }
 
 #content_body .li_first {
 	/* background-color: fuchsia; */
-	float: left;
+	/*
+float: left;
 	width: 30%;	
 	position: relative;
+*/
+	flex:1;
 }
 
 #content_body .li_second {
 	/* background-color: green; */	
-	float: left;
+	/*
+float: left;
 	width: 65%;
+*/
+	flex:4;
 }
+/*
 
 #content_body .li_third {
-	/* background-color: lime;  */	
-	float: left;
-	width: 5%;
+	 position: relative;
+
 	height: 100%;
-	position: relative;
+	flex:1;
 }
+*/
 
 
 #content_body .extendDiv {

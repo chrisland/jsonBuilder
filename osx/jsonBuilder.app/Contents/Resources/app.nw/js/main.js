@@ -126,7 +126,8 @@ var unsavedShow = function () {
 
 var toolbar_save = function (e){
 	if(!_openpath) { 
-		//toolbar_saveAs();
+		toolbar_saveAs();
+		//alert('no saved');
 		return false;
 	}
 	//alert('save '+_openpath);
@@ -153,7 +154,7 @@ var toolbar_saveAs = function (){
 		}
 
 		//alert('save as '+_openpath);
-		//toolbar_save();
+		toolbar_save();
 		return false;
 	});
 	node.trigger('click');
@@ -275,12 +276,15 @@ var getJsonFromDom = function () {
 		
 		if (jQuery(k).hasClass('inputKey')) {
 	//	if (typ == 'key') {
-			
+			val = val.replace(/["']/g, "");
+			if (_textarea_encode) {
+				val = encodeURIComponent(val);
+			}
 			str += '"'+val+'":';
 			openPair = true;
 	//	} else if (typ == 'value') {
 		} else if (jQuery(k).hasClass('inputValue')) {
-			val = val.replace('"','');
+			val = val.replace(/["']/g, "");
 			if (_textarea_encode) {
 				val = encodeURIComponent(val);
 			}
@@ -354,9 +358,10 @@ var renderJsonFromObj = function (jsonobj) {
 	jQuery('#content_body').html('').append(dom);//.append('<div class="breaker"></div>');
 
 	
-	moveAddBtn();
+	//moveAddBtn();
 	
 };
+/*
 
 jQuery(window).resize(function() {
 	moveAddBtn();
@@ -374,6 +379,7 @@ var moveAddBtn = function () {
 	
 };
 
+*/
 
 
 
@@ -412,7 +418,8 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 			td_v.html(getInput(obj,'value', i, rootRow));
 		}
 	}
-	
+	/*
+
 	if (_editable && lastRow == i ) {
 
 	    var addBtn = jQuery('<button/>', {text: '+', class: 'addBtn'})
@@ -440,7 +447,8 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 	    var btndom = jQuery('<div />', {class:"li_third"}).append(addBtn);
 	   // btndom.css('height',tr.find('.li_second')[0].scrollHeight );
 	    tr.find('.li_second').first().after(btndom);
-	}
+	} 
+	*/
 
 
 	tr.find('.input').on('focus', function (e) {
@@ -458,7 +466,9 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 
 var getInput = function(value, type, i, rootRow) {
 	var span = jQuery();
-	var dom = jQuery('<input />', {value: decodeURIComponent(value), class: 'input'}).data('type',type).data('nr',i).data('rootRow',rootRow);
+	//var dom = jQuery('<input />', {value: decodeURIComponent(value), class: 'input'}).data('type',type).data('nr',i).data('rootRow',rootRow);
+	var dom = jQuery('<input />', {value: decodeURIComponent(value), class: 'input'}); //.data('type',type);
+
 	dom.on('change', function (e) {
 		
 
@@ -477,8 +487,9 @@ var getInput = function(value, type, i, rootRow) {
 		
 		//jQuery('#content_body').find('.extendDiv').removeClass('extend').prop('disabled',false);
 			
-			
-		if ( jQuery(e.currentTarget).parent().find('.extendDiv').length <= 0 ) {
+		//alert(jQuery(e.currentTarget).parent().find('.extendDiv').length);
+		
+		if ( jQuery(e.currentTarget).parent().find('.extendDiv').length < 1 ) {
 			
 			jQuery('#content_body').find('.extendDiv').remove();
 			
@@ -498,7 +509,8 @@ var getInput = function(value, type, i, rootRow) {
 			});
 			
 		} else {
-			
+			//alert('del');
+			jQuery('#content_body').find('.extendDiv').remove();
 		}
 		
 	});
@@ -515,8 +527,8 @@ var getInput = function(value, type, i, rootRow) {
 		var place = jQuery('<div />', {class:'helpers hidden'});
 		
 		var del = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_del', tabindex: '-1'})
-	   // .data('keypath',parentKeyPath)
-	   .data('icon', '&#xe054;')
+		// .data('keypath',parentKeyPath)
+	   	.data('icon', '&#xe054;')
 	    .on('click', function (e) {
 		    
 		    var tr = jQuery(e.currentTarget).parent().parent().parent();
@@ -574,9 +586,33 @@ var getInput = function(value, type, i, rootRow) {
 	    });
 		place.append(typ);
 	   // span = span.add(typ);
-	    
-	    
-	    
+
+
+	   var addBtn = jQuery('<button/>', {text: '+', class: 'valueBtn addBtn', tabindex: '-1'})
+	   //.data('keypath',parentKeyPath)
+	   .on('click', function (e) {
+	    	
+	    	//alert('jo');
+	    	var inputKey = jQuery(e.currentTarget).parent().parent().parent(); //.find('.li_first');
+	    	var val = inputKey.find('.inputKey').val();
+	    	//alert(val);
+	    	if (val) {
+		    	var row = getRow('', '', i+1, rootRow , 0, _editable);
+		    	var tr = jQuery(e.currentTarget).parent().parent().parent();
+		    	tr.after(row);
+		    	
+		    	renewTrigger();
+		    	
+				reRenderDom();
+			} else {
+				inputKey.fadeOut(200, function () {
+					inputKey.fadeIn(400);
+				});
+			}
+	    });
+		place.append(addBtn);
+	
+
 	    span = span.add(place);
 	    
 		dom.attr('placeholder','Key').addClass('inputKey');
