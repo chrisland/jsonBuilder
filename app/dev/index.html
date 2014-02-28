@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+// v 0.4
+//
+// begin: 2014-02-20
+ -->
+<html>
+<head>
+<title>jsonBuilder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link href="css/style.css" rel="stylesheet">
+<link href="css/splitter.css" rel="stylesheet">
+
+
+</head>
+<body>
+<div id="toolbar" >
+	<button id="toolbar_new" ><span class="icons" data-icon="&#xe060;"></span>New</button>
+	<button id="toolbar_open"><span class="icons" data-icon="&#xe089;"></span>Open</button>
+	<button id="toolbar_save"><span class="icons" data-icon="&#xe066;"></span>Save</button>
+	<button id="toolbar_undo"><span class="icons" data-icon="&#xe050;"></span>Undo</button>
+	<button id="toolbar_redo"><span class="icons" data-icon="&#xe051;"></span>Redo</button>
+</div>
+
+<div class="page">
+<div id="page" >
+	<div id="textarea" class="side">
+		<div class="content">
+			<div class="toolbar">
+				<button id="textarea_nice">Nicecode</button>
+				<button id="textarea_encode">Encode</button>
+			</div>
+			<textarea id="textarea_jsonstring" readonly></textarea>
+			<div class="breaker"></div>
+		</div>
+	</div>
+	<div id="content" class="side">
+		<div class="content" id="content_body">
+		</div>
+	</div>
+	<div class="breaker"></div>
+</div>
+</div>
+	
+
+<div class="system hidden">
+	<input type="file" id="system_openfile" name="" value="" accept=".json"/>
+	<input type="file" id="system_savefile" name="" value="" accept=".json" nwsaveas/>
+</div>
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/splitter.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>
