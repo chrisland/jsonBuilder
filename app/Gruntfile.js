@@ -42,14 +42,17 @@ module.exports = function(grunt) {
 	            }
 	        },
 	        { cwd: 'dev/', src: 'package.json', dest: 'live/', expand: true },
-	        { cwd: 'dev/', src: 'fonts', dest: 'live/', expand: true },
-	        { cwd: 'dev/', src: 'fonts/Simple-Line-Icons.ttf', dest: 'live/', expand: true },
-	        { cwd: 'dev/', src: 'fonts/Simple-Line-Icons.woff', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'icon.png', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'css/img', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'css/img/icon_del.svg', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'css/img/icon_dupli.svg', dest: 'live/', expand: true },
-	        { cwd: 'dev/', src: 'css/img/icon_obj.svg', dest: 'live/', expand: true }
+	        { cwd: 'dev/', src: 'css/img/icon_obj.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_add.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_new.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_open.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_save.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_undo.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'css/img/icon_redo.svg', dest: 'live/', expand: true }
 	        ]
 	    }
 	},
@@ -63,7 +66,8 @@ module.exports = function(grunt) {
 			win: false, // We want to build it for win
 			linux32: false, // We don't need linux32
 			linux64: false, // We don't need linux64
-			mac_icns: 'jsonbuilder.icns'
+			mac_icns: 'jsonbuilder.icns',
+			credits: 'credits.html'
 		},
 		src: ['./live/**/*'] // Your node-wekit app
 	},

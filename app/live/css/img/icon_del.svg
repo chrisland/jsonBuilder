@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px"
-	 height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-<g id="Ebene_1">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+<g id="Ebene_1_1_">
 </g>
-<g id="Ebene_2">
-	<polygon fill="none" stroke="#E2001A" stroke-width="2" stroke-miterlimit="10" points="-284.917,1820 -274.917,1820 
-		-274.917,1827.833 -267,1827.833 -267,1845 -268.083,1846.083 -284.917,1846.083 -286.041,1844.958 -286.041,1821.333 	"/>
-	
-		<line fill="none" stroke="#E2001A" stroke-width="2" stroke-miterlimit="10" x1="-274.917" y1="1820" x2="-267.042" y2="1827.875"/>
-	<polyline fill="none" stroke="#E2001A" stroke-width="2" stroke-miterlimit="10" points="-274.917,1817.583 -273.792,1816.25 
-		-263.792,1816.25 -263.792,1824.083 -255.875,1824.083 -255.875,1841.25 -256.958,1842.333 -263.873,1842.333 	"/>
-	
-		<line fill="none" stroke="#E2001A" stroke-width="2" stroke-miterlimit="10" x1="-263.792" y1="1816.25" x2="-255.917" y2="1824.125"/>
-	<path d="M78.493,20.44l-16.98-0.205v-7.527l-0.092-0.699c-0.467-1.713-2.369-4.949-6.223-4.949h-14.29
-		c-3.229,0-5.194,3.029-5.889,5.624l-0.085,7.231l-18.917-0.229l-0.063,5.318l3.91,0.047l5.513,63.877l4.38,4.865h35.941l4.027-4.53
-		l6.098-63.538l2.607,0.031L78.493,20.44z M40.244,13.777c0.209-0.579,0.577-1.284,0.664-1.401h14.29
-		c0.539,0,0.852,0.486,0.996,0.797v6.998l-15.95-0.191V13.777z M64.601,87.025l-1.289,1.452H32.125l-1.603-1.781l-5.315-61.58
-		l45.282,0.545L64.601,87.025z"/>
-</g>
+<rect x="15.251" y="48.35" width="67.978" height="18.18"/>
 </svg>

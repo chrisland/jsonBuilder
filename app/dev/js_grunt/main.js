@@ -280,7 +280,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
         return self;
     };
 })(jQuery);;
-// v 0.4
+// v 0.5
 //
 // begin: 2014-02-20
 
@@ -297,6 +297,25 @@ process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
 });
   
+
+window.ondragover = function(e) { e.preventDefault(); return false };
+window.ondrop = function(e) { e.preventDefault(); 
+
+
+    console.log(e.dataTransfer.files[0].path);
+
+  _openpath = e.dataTransfer.files[0].path;
+	_fs.readFile(_openpath, "utf-8", function (err, data) {
+		if (err) throw err;
+		//console.log(data);
+		unsavedHide();
+		renderJsonFromStr(data, true);
+		renewTrigger();
+	});
+	
+  return false };
+
+
 
    
 /*
@@ -836,7 +855,7 @@ var getInput = function(value, type, i, rootRow) {
 	    });
 	    //span.append(del);
 	    //span = span.add(del);
-	    place.append(del);
+	    
 	    
 		var dupli = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_dupli', tabindex: '-1'})
 	   // .data('keypath',parentKeyPath)
@@ -852,7 +871,6 @@ var getInput = function(value, type, i, rootRow) {
 		   	reRenderDom();
 		    return false;
 	    });
-		place.append(dupli);
 		
 		
 		var typ = jQuery('<button/>', {text: '', class: 'valueBtn valueBtn_obj', tabindex: '-1'})
@@ -870,11 +888,11 @@ var getInput = function(value, type, i, rootRow) {
 		   	reRenderDom();
 		    return false;
 	    });
-		place.append(typ);
+		
 	   // span = span.add(typ);
 
 
-	   var addBtn = jQuery('<button/>', {text: '+', class: 'valueBtn addBtn', tabindex: '-1'})
+	   var addBtn = jQuery('<button/>', {class: 'valueBtn valueBtn_add', tabindex: '-1'})
 	   //.data('keypath',parentKeyPath)
 	   .on('click', function (e) {
 	    	
@@ -896,8 +914,11 @@ var getInput = function(value, type, i, rootRow) {
 				});
 			}
 	    });
+	    
 		place.append(addBtn);
-	
+		place.append(typ);
+		place.append(dupli);
+		place.append(del);
 
 	    span = span.add(place);
 	    
