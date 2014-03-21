@@ -8,7 +8,7 @@ var gui = require('nw.gui');
 onload = function() {
 	var win = gui.Window.get();
 	win.show();
-	//win.showDevTools();
+	win.showDevTools();
 }
 
 
@@ -21,7 +21,7 @@ window.ondragover = function(e) { e.preventDefault(); return false };
 window.ondrop = function(e) { e.preventDefault(); 
 
 
-    console.log(e.dataTransfer.files[0].path);
+   // console.log(e.dataTransfer.files[0].path);
 
   _openpath = e.dataTransfer.files[0].path;
 	_fs.readFile(_openpath, "utf-8", function (err, data) {
@@ -50,9 +50,15 @@ var _editable = true,
 	_history = [],
 	_history_open = 0,
 	_textarea_nice = false,
-	_textarea_encode = false,
-	_trigger_open = jQuery('<input />', {type: 'text', class:'trigger trigger_open',value:'{',readonly: true}),
+	_textarea_encode = false;
+	
+	/*
+var _trigger_open = jQuery('<input />', {type: 'text', class:'trigger trigger_open',value:'{',readonly: true}),
 	_trigger_close = jQuery('<input />', {type: 'text', class:'trigger trigger_close',value:'}',readonly: true});
+	*/
+	
+var _trigger_open = jQuery('<input />', {type: 'text', class:'trigger trigger_open',value:''}),
+	_trigger_close = jQuery('<input />', {type: 'text', class:'trigger trigger_close',value:''});
 
 
 Object.size = function(obj) {
@@ -385,25 +391,6 @@ var renderJsonFromObj = function (jsonobj) {
 	//moveAddBtn();
 	
 };
-/*
-
-jQuery(window).resize(function() {
-	moveAddBtn();
-	//alert('jo');
-});
-
-var moveAddBtn = function () {
-	
-	jQuery('#content_body').find('.li_third').each(function (i,k) {
-		
-		jQuery(k).css('height',jQuery(k).prev('.li_second')[0].scrollHeight );
-		//alert(jQuery(k).prev('.li_second')[0].scrollHeight);
-		
-	});
-	
-};
-
-*/
 
 
 
@@ -442,37 +429,6 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 			td_v.html(getInput(obj,'value', i, rootRow));
 		}
 	}
-	/*
-
-	if (_editable && lastRow == i ) {
-
-	    var addBtn = jQuery('<button/>', {text: '+', class: 'addBtn'})
-	    //.data('keypath',parentKeyPath)
-	    .on('click', function (e) {
-	    	
-	    	//alert('jo');
-	    	var inputKey = jQuery(e.currentTarget).parent().parent().find('.li_first');
-	    	var val = inputKey.find('.inputKey').val();
-	    	//alert(val);
-	    	if (val) {
-		    	var row = getRow('', '', i+1, rootRow , lastRow+1, _editable);
-		    	var tr = jQuery(e.currentTarget).parent().parent();
-		    	tr.after(row);
-		    	
-		    	renewTrigger();
-		    	
-				reRenderDom();
-			} else {
-				inputKey.fadeOut(200, function () {
-					inputKey.fadeIn(400);
-				});
-			}
-	    });
-	    var btndom = jQuery('<div />', {class:"li_third"}).append(addBtn);
-	   // btndom.css('height',tr.find('.li_second')[0].scrollHeight );
-	    tr.find('.li_second').first().after(btndom);
-	} 
-	*/
 
 
 	tr.find('.input').on('focus', function (e) {
@@ -672,24 +628,15 @@ var makeTable = function (rows) {
 	
 	//dom.find('input:first').before(_trigger_open.clone());
 	var last = dom.find('input:last');
-	//.after(_trigger_close.clone());
-	/*
-	if (last.parent().parent().find('ul').length > 0) {
-		alert('ups ?');
-		//last.parent().parent().parent().parent().parent().parent().find('table').after(_trigger_close.clone());
-	} else {
-		//alert('was ?');
-		//last.after(_trigger_close.clone());
-	}
-	*/
 
 	return dom;	
 };
 
+
 var makeTrigger = function (dom) {
 
-	jQuery(dom).find('.li_first').first().prepend(_trigger_open.clone());	
-	jQuery(dom).find('.li_second').last().append(_trigger_close.clone());
+	jQuery(dom).find('.li_first').first().prepend( _trigger_open.clone().val('{') );	
+	jQuery(dom).find('.li_second').last().append( _trigger_close.clone().val('}') );
 	return dom;
 };
 
@@ -701,6 +648,7 @@ var renewTrigger = function () {
 	
 	jQuery('#content_body').find('ul').each(function(i, k){
 		var ul = makeTrigger(jQuery(k));
+		
 		jQuery(k).append(ul);
 	});
 	
