@@ -641,6 +641,7 @@ var renderJsonFromStr = function (jsonstring, history) {
 
 var renderJsonFromObj = function (jsonobj) {
 	
+	console.log(jsonobj);
 	
 	var str = pareseObjToJson(jsonobj);
 	//alert(str);
@@ -656,7 +657,26 @@ var renderJsonFromObj = function (jsonobj) {
 	Object.keys(_jsonObj).forEach(function(key) {
 	   // console.log(key, _jsonObj[key]);
 	   
-	    dom = dom.add(getRow(key, _jsonObj[key], i, 0, objSize+1, _editable));
+	   
+	   if ( jQuery.isArray(_jsonObj[key]) ) {
+		   console.log('arr1');
+		   var type = 'array';
+	   } else {
+		   	console.log('obj2');
+		   	var type = 'object';
+	   }
+	  /*
+ 	if (typeof _jsonObj[key] == 'array') {
+		   	console.log('arr');
+		   	console.log(_jsonObj[key]);
+	   	}
+	   	if (typeof _jsonObj[key] == 'object') {
+		   	console.log('obj');
+		   	console.log(_jsonObj[key]);
+	   	}
+*/
+	   	
+	    dom = dom.add(getRow(type, key, _jsonObj[key], i, 0, objSize+1, _editable));
 	    i++;
 	});
 	//console.log(dom);
@@ -679,13 +699,13 @@ var renderJsonFromObj = function (jsonobj) {
 	getRow
 */
 
-var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
+var getRow = function (type, key, obj, i, rootRow, lastRow, _editable) {
 	/*
 	if (parentKeyPath) {
 		parentKeyPath += '/';
 	}*/
 	//var newParentKeyPath = parentKeyPath+'/'+key;
-	var tr = jQuery('<li />', {'data-i':i, 'data-rootRow':rootRow, 'data-lastRow':lastRow });
+	var tr = jQuery('<li />', {'data-i':i, 'data-rootRow':rootRow, 'data-lastRow':lastRow, 'data-type':type });
 	var td_k = jQuery('<div />', {text: key, class:"li_first"}).appendTo(tr);
 	if (_editable) {
 		td_k.html(getInput(key,'key', i, rootRow));
@@ -697,7 +717,15 @@ var getRow = function (key, obj, i, rootRow, lastRow, _editable) {
 		var objSize = Object.size(obj);
 		var leer = jQuery();
 		Object.keys(obj).forEach(function(key) {
-			leer = leer.add(getRow(key, obj[key], ia, i, objSize, _editable));
+			if ( jQuery.isArray(obj[key]) ) {
+			   console.log('arr1');
+			   var type_leer = 'array';
+		   } else {
+			   	console.log('obj2');
+			   	var type_leer = 'object';
+		   }
+		   
+			leer = leer.add(getRow(type_leer, key, obj[key], ia, i, objSize, _editable));
 			ia++;
 		});
 		leer = makeTable(leer);
@@ -916,8 +944,20 @@ var makeTable = function (rows) {
 
 var makeTrigger = function (dom) {
 
-	jQuery(dom).find('.li_first').first().prepend(_trigger_open.clone().val('a') );	
-	jQuery(dom).find('.li_second').last().append(_trigger_close.clone());
+	var value = ['{','}'];
+	/*if (type && type == 'array') {
+		var value = ['[',']'];
+	}*/
+	var first = jQuery(dom).find('.li_first').first();
+	if (first && first.attr('data-type') == 'array') {
+		var value = ['[',']'];
+	}
+	var last = jQuery(dom).find('.li_second').last();
+	if (last && last.attr('data-type') == 'array') {
+		var value = ['[',']'];
+	}
+	first.prepend( _trigger_open.clone().val(value[0]) );	
+	last.append( _trigger_close.clone().val(value[1]) );
 	return dom;
 };
 
