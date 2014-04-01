@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 	      separator: ';',
 	    },
 	    dist: {
-	      src: ['dev/js/jquery-2.1.0.min.js', 'dev/js/splitter.js', 'dev/js/main.js'],
+	      src: ['dev/js/jquery-2.1.0.min.js', 'dev/js/splitter.js', 'dev/js/main.js', 'dev/js/gremlin.min.js'],
 	      dest: 'dev/js_grunt/main.js',
 	    },
 	  },
