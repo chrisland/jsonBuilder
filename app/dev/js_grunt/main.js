@@ -310,7 +310,7 @@ window.ondrop = function(e) { e.preventDefault();
 		//console.log(data);
 		unsavedHide();
 		renderJsonFromStr(data, true);
-		renewTrigger();
+		//##renewTrigger();
 	});
 	
   return false };
@@ -410,7 +410,7 @@ var openLocalFile = function(evt) {
 		//console.log(data);
 		unsavedHide();
 		renderJsonFromStr(data, true);
-		renewTrigger();
+		//##renewTrigger();
 	});
 };
 
@@ -481,7 +481,7 @@ var toolbar_new = function (e){
 	_openpath = undefined;
 	unsavedHide();
 	renderJsonFromStr('{"":""}', true);
-	renewTrigger();
+	//##renewTrigger();
 	return false;
 };
 
@@ -572,7 +572,7 @@ var getJsonFromDom = function () {
 		
 		var typ = jQuery(k).data('type'),
 			val = jQuery(k).val();
-			
+		/*	
 		if (val == '}') {
 			str += '}';
 			return;
@@ -580,24 +580,38 @@ var getJsonFromDom = function () {
 			str += '{';
 			return;
 		}
+		*/
 		
-		if (str && !openPair) {
+		//var endPair = '';
+		//if (str && !openPair) {
+		/*
+
+		if (str) {
 			str += ',';
+			//endPair = ',';
 		}
 		
+*/
+		
 		if (jQuery(k).hasClass('inputKey')) {
-	//	if (typ == 'key') {
-			val = val.replace(/["']/g, "");
+
+			
 			if (_textarea_encode) {
 				val = encodeURIComponent(val);
+			} else {
+				val = val.replace(/["']/g, "");
 			}
 			str += '"'+val+'":';
-			openPair = true;
-	//	} else if (typ == 'value') {
+			//openPair = true;
+		
+
 		} else if (jQuery(k).hasClass('inputValue')) {
-			val = val.replace(/["']/g, "");
+		
+			
 			if (_textarea_encode) {
 				val = encodeURIComponent(val);
+			} else {
+				val = val.replace(/["']/g, "");
 			}
 			if (val == '') {
 				str += '""';
@@ -608,13 +622,19 @@ var getJsonFromDom = function () {
 					str += val;
 				}
 			}
-			
 			//str += '"'+val+'"';
-			openPair = false;
+			//openPair = false;
+			
+			
+		} else if (jQuery(k).hasClass('inputTrigger')) {
+		
+			str += val;
 		}
 
+
 	});
-	//console.log(str);
+	console.log(str);
+	
 	var obj = pareseJsonToObj(str);
 	unsavedShow();
 	return obj;	
@@ -641,7 +661,8 @@ var renderJsonFromStr = function (jsonstring, history) {
 
 var renderJsonFromObj = function (jsonobj) {
 	
-	console.log(jsonobj);
+	console.log('renderJsonFromObj');
+	//console.log(jsonobj);
 	
 	var str = pareseObjToJson(jsonobj);
 	//alert(str);
@@ -652,58 +673,148 @@ var renderJsonFromObj = function (jsonobj) {
 	//console.log(_jsonObj);
 	
 	var dom = jQuery();
-	var i = 1;
+	var i = 0;
 	var objSize = Object.size(_jsonObj);
+	
+	dom = dom.add('<input value="{" class="inputTrigger" />');
+	
 	Object.keys(_jsonObj).forEach(function(key) {
 	   // console.log(key, _jsonObj[key]);
-	   
-	   
-	   if ( jQuery.isArray(_jsonObj[key]) ) {
-		   console.log('arr1');
-		   var type = 'array';
-	   } else {
-		   	console.log('obj2');
-		   	var type = 'object';
-	   }
-	  /*
- 	if (typeof _jsonObj[key] == 'array') {
-		   	console.log('arr');
-		   	console.log(_jsonObj[key]);
-	   	}
-	   	if (typeof _jsonObj[key] == 'object') {
-		   	console.log('obj');
-		   	console.log(_jsonObj[key]);
-	   	}
-*/
-	   	
-	    dom = dom.add(getRow(type, key, _jsonObj[key], i, 0, objSize+1, _editable));
+
+
+	    dom = dom.add( makeBlock( _jsonObj[key], key ) );
+	    
+	    if (i != objSize) {
+	    	//console.log(i, objSize);
+			dom = dom.add('<input value="," class="inputTrigger" />');    
+	    }
+
 	    i++;
 	});
-	//console.log(dom);
-	dom = makeTable(dom);
-	dom = makeTrigger(dom);
 	
-	
+	dom = dom.add('<input value="}" class="inputTrigger" />');
 	
 	 
-	jQuery('#content_body').html('').append(dom);//.append('<div class="breaker"></div>');
+	jQuery('#content_body').html('').append(dom);
 
+
+};
+
+
+/*
+	makeBlock
+*/
+
+var makeBlock = function (obj, key) {
+	//console.log(obj);
 	
-	//moveAddBtn();
+	var box = jQuery('<div />');
+	var content = jQuery();
 	
+	
+	
+	if ( jQuery.isArray(obj) ) {
+		//console.log('-> array');
+		
+		var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+		content = content.add(domKey);
+		
+		content = content.add('<input value="[" class="inputTrigger" />');
+		//var span = jQuery();
+		var i = 0;
+		var objSize = Object.size(obj);
+		Object.keys(obj).forEach(function(key2) {
+			content = content.add( makeBlock( obj[key2] ) );
+			if (i != objSize) {
+				content = content.add('<input value="," class="inputTrigger" />');
+			}
+			i++;
+		});
+		//content = span;
+		content = content.add('<input value="]" class="inputTrigger" />');
+		
+	} else if ( typeof obj === 'object' ) {
+		//console.log('-> obj');
+		
+		var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+		content = content.add(domKey);
+		
+		
+		content = content.add('<input value="{" class="inputTrigger" />');
+		//var span = jQuery();
+		var i = 0;
+		var objSize = Object.size(obj);
+		Object.keys(obj).forEach(function(key2) {
+			content = content.add( makeBlock( obj[key2], key2 ) );
+			if (i != objSize) {
+				content = content.add('<input value="," class="inputTrigger" />');
+			}
+			i++;
+		});
+		//content = span;
+		content = content.add('<input value="}" class="inputTrigger" />');
+		
+	} else {
+		//console.log('-> text');
+		content = content.add( getBoxInput(obj, key) );
+		//content = content.add('<input value=",#" class="inputTrigger" />');
+	}
+	
+	//content = content.add('<input value="}" />');
+	
+	box.append(content);
+	
+	return box;
 };
 
 
 
 /*
-	getRow
+	getBoxInput
 */
 
+var getBoxInput = function(value, key) {
+	
+	if (value) {
+		value = decodeURIComponent(value);
+		
+		var span = jQuery();
+		var domKey = undefined;
+		if (key) {
+			domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+		}
+		
+		var domValue = jQuery('<input />', {value: value, class: 'inputValue'}); 
+		
+		span = span.add(domKey).add(domValue);
+		
+		span.on('change', function (e) {
+			
+	
+			var obj = getJsonFromDom();
+			history_log(obj);
+			
+			jQuery('#textarea_jsonstring').text(pareseObjToJson(obj));
+			
+		
+			return false;
+		})
+		
+		
+		return span;
+	}
+	
+
+}
+
+
+/*
+	getRow
+*/
+/*
+
 var getRow = function (type, key, obj, i, rootRow, lastRow, _editable) {
-	/*
-	if (parentKeyPath) {
-		parentKeyPath += '/';
-	}*/
+
 	//var newParentKeyPath = parentKeyPath+'/'+key;
 	var tr = jQuery('<li />', {'data-i':i, 'data-rootRow':rootRow, 'data-lastRow':lastRow, 'data-type':type });
 	var td_k = jQuery('<div />', {text: key, class:"li_first"}).appendTo(tr);
@@ -718,10 +829,10 @@ var getRow = function (type, key, obj, i, rootRow, lastRow, _editable) {
 		var leer = jQuery();
 		Object.keys(obj).forEach(function(key) {
 			if ( jQuery.isArray(obj[key]) ) {
-			   console.log('arr1');
+			   console.log('arr1 _# '+ia);
 			   var type_leer = 'array';
 		   } else {
-			   	console.log('obj2');
+			   	console.log('obj2 _# '+ia);
 			   	var type_leer = 'object';
 		   }
 		   
@@ -747,11 +858,13 @@ var getRow = function (type, key, obj, i, rootRow, lastRow, _editable) {
 	return tr.append(jQuery('<div class="breaker"></div>'));	
 };
 
+*/
 
 
 /*
 	getInput
 */
+/*
 
 var getInput = function(value, type, i, rootRow) {
 	var span = jQuery();
@@ -913,11 +1026,13 @@ var getInput = function(value, type, i, rootRow) {
     
 	return span;
 };
+*/
 
 
 /*
 	getTable
 */
+/*
 
 var getTable = function () {
 	
@@ -925,9 +1040,11 @@ var getTable = function () {
 	return dom;	
 };
 
+*/
 /*
 	makeTable
 */
+/*
 
 var makeTable = function (rows) {
 	
@@ -941,13 +1058,13 @@ var makeTable = function (rows) {
 	return dom;	
 };
 
+*/
 
+/*
 var makeTrigger = function (dom) {
 
 	var value = ['{','}'];
-	/*if (type && type == 'array') {
-		var value = ['[',']'];
-	}*/
+
 	var first = jQuery(dom).find('.li_first').first();
 	if (first && first.attr('data-type') == 'array') {
 		var value = ['[',']'];
@@ -976,7 +1093,7 @@ var renewTrigger = function () {
 	//alert('trigger renew done');
 };
 
-
+*/
 
 
 /*
