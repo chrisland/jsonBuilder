@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--
+// v 0.5
+//
+// begin: 2014-02-20
+ -->
+<html>
+<head>
+<title>jsonBuilder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link href="css/style.min.css" rel="stylesheet">
+<link href="css/splitter.min.css" rel="stylesheet">
+
+
+</head>
+<body style="-webkit-app-region: drag">
+<div id="toolbar" >
+	<button id="toolbar_new" class="menu_icons" >New</button>
+	<button id="toolbar_open" class="menu_icons">Open</button>
+	<button id="toolbar_save" class="menu_icons">Save</button>
+	<button id="toolbar_undo" class="menu_icons">Undo</button>
+	<button id="toolbar_redo" class="menu_icons">Redo</button>
+</div>
+
+<div class="page">
+<div id="page" >
+	<div id="textarea" class="side">
+		<div class="content">
+			<div class="toolbar">
+				<button id="textarea_nice">Nicecode</button>
+				<button id="textarea_encode">Encode</button>
+			</div>
+			<textarea id="textarea_jsonstring" readonly></textarea>
+			<div class="breaker"></div>
+		</div>
+	</div>
+	<div id="content" class="side">
+		<div class="content" id="content_body">
+		</div>
+	</div>
+	<div class="breaker"></div>
+</div>
+</div>
+	
+
+<div class="system hidden">
+	<input type="file" id="system_openfile" name="" value="" accept=".json"/>
+	<input type="file" id="system_savefile" name="" value="" accept=".json" nwsaveas/>
+</div>
+
+<script type="text/javascript" src="js/main.min.js"></script>
+
+</body>
+</html>

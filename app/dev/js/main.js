@@ -291,27 +291,7 @@ var getJsonFromDom = function () {
 		
 		var typ = jQuery(k).data('type'),
 			val = jQuery(k).val();
-		/*	
-		if (val == '}') {
-			str += '}';
-			return;
-		} if (val == '{') {
-			str += '{';
-			return;
-		}
-		*/
-		
-		//var endPair = '';
-		//if (str && !openPair) {
-		/*
 
-		if (str) {
-			str += ',';
-			//endPair = ',';
-		}
-		
-*/
-		
 		if (jQuery(k).hasClass('inputKey')) {
 
 			
@@ -380,7 +360,7 @@ var renderJsonFromStr = function (jsonstring, history) {
 
 var renderJsonFromObj = function (jsonobj) {
 	
-	console.log('renderJsonFromObj');
+	//console.log('renderJsonFromObj');
 	//console.log(jsonobj);
 	
 	var str = pareseObjToJson(jsonobj);
@@ -398,6 +378,7 @@ var renderJsonFromObj = function (jsonobj) {
 	dom = dom.add('<input value="{" class="inputTrigger" />');
 	
 	Object.keys(_jsonObj).forEach(function(key) {
+	   
 	   // console.log(key, _jsonObj[key]);
 
 
@@ -434,9 +415,11 @@ var makeBlock = function (obj, key) {
 	
 	if ( jQuery.isArray(obj) ) {
 		//console.log('-> array');
+		if (key) {
+			var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+			content = content.add(domKey);
+		}
 		
-		var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
-		content = content.add(domKey);
 		
 		content = content.add('<input value="[" class="inputTrigger" />');
 		//var span = jQuery();
@@ -454,24 +437,25 @@ var makeBlock = function (obj, key) {
 		
 	} else if ( typeof obj === 'object' ) {
 		//console.log('-> obj');
-		
-		var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
-		content = content.add(domKey);
-		
+		if (key) {
+			var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+			content = content.add(domKey);
+		}
 		
 		content = content.add('<input value="{" class="inputTrigger" />');
-		//var span = jQuery();
+		var span = jQuery('<span />');
 		var i = 0;
 		var objSize = Object.size(obj);
 		Object.keys(obj).forEach(function(key2) {
-			content = content.add( makeBlock( obj[key2], key2 ) );
+			span.append( makeBlock( obj[key2], key2 ) );
 			if (i != objSize) {
-				content = content.add('<input value="," class="inputTrigger" />');
+				span.append('<input value="," class="inputTrigger" />');
 			}
 			i++;
 		});
-		//content = span;
-		content = content.add('<input value="}" class="inputTrigger" />');
+		
+		span.append('<input value="}" class="inputTrigger" />');
+		content = content.add(span);
 		
 	} else {
 		//console.log('-> text');
@@ -494,34 +478,35 @@ var makeBlock = function (obj, key) {
 
 var getBoxInput = function(value, key) {
 	
-	if (value) {
-		value = decodeURIComponent(value);
-		
-		var span = jQuery();
-		var domKey = undefined;
-		if (key) {
-			domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
-		}
-		
-		var domValue = jQuery('<input />', {value: value, class: 'inputValue'}); 
-		
-		span = span.add(domKey).add(domValue);
-		
-		span.on('change', function (e) {
-			
+	//if (value) {
+	value = decodeURIComponent(value);
 	
-			var obj = getJsonFromDom();
-			history_log(obj);
-			
-			jQuery('#textarea_jsonstring').text(pareseObjToJson(obj));
-			
+	var span = jQuery();
+	var domKey = undefined;
+	if (key) {
+		//console.log('->', key);
+		domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+	}
+	
+	var domValue = jQuery('<input />', {value: value, class: 'inputValue'}); 
+	
+	span = span.add(domKey).add(domValue);
+	
+	span.on('change', function (e) {
 		
-			return false;
-		})
+
+		var obj = getJsonFromDom();
+		history_log(obj);
 		
+		jQuery('#textarea_jsonstring').text(pareseObjToJson(obj));
+		
+	
+		return false;
+	})
+	
 		
 		return span;
-	}
+	//}
 	
 
 }

@@ -52,21 +52,22 @@ module.exports = function(grunt) {
 	        { cwd: 'dev/', src: 'css/img/icon_open.svg', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'css/img/icon_save.svg', dest: 'live/', expand: true },
 	        { cwd: 'dev/', src: 'css/img/icon_undo.svg', dest: 'live/', expand: true },
-	        { cwd: 'dev/', src: 'css/img/icon_redo.svg', dest: 'live/', expand: true }
+	        { cwd: 'dev/', src: 'css/img/icon_redo.svg', dest: 'live/', expand: true },
+	        { cwd: 'dev/', src: 'fonts/Roboto-Regular.ttf', dest: 'live/', expand: true },
 	        ]
 	    }
 	},
     nodewebkit: {
 		options: {
 			version: '0.9.2',
-			app_name: 'jsonBuilder',
+			app_name: 'jsoning',
 			app_version: '0.5',
 			build_dir: './release', // Where the build version of my node-webkit app is saved
 			mac: true, // We want to build it for mac
 			win: true, // We want to build it for win
 			linux32: false, // We don't need linux32
 			linux64: false, // We don't need linux64
-			mac_icns: 'jsonbuilder.icns',
+			mac_icns: 'jsoning.icns',
 			credits: 'credits.html'
 		},
 		src: ['./live/**/*'] // Your node-wekit app

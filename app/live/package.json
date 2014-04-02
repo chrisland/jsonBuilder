@@ -1,15 +1,17 @@
 {
-	"name": "jsonBuilder",
-	"description": "Simple json Format explorer.",
-	"version": "0.5",
+	"name": "jsoning",
+	"description": "Simple json format explorer.",
+	"version": "0.6",
 	"main": "index.html",
+	"single-instance":true,
 	"window": {
-		"title":"jsonBuilder",
+		"title":"jsoning",
 		"toolbar": false,
 		"icon": "icon.png",
 		"width": 850,
 		"height": 500,
-		"show": false
+		"show": false,
+		"frame": false
 	},
 	"maintainers": 
 		[{
