@@ -280,7 +280,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
         return self;
     };
 })(jQuery);;
-// v 0.5
+// v 0.6
 //
 // begin: 2014-02-20
 
@@ -652,28 +652,30 @@ var renderJsonFromObj = function (jsonobj) {
 	_jsonObj = jsonobj
 	//console.log(_jsonObj);
 	
-	var dom = jQuery();
+	var dom = jQuery('<table>');
 	var i = 0;
 	var objSize = Object.size(_jsonObj);
 	
-	dom = dom.add('<input value="{" class="inputTrigger" />');
+	dom.append('<input value="{" class="inputTrigger" />');
 	
 	Object.keys(_jsonObj).forEach(function(key) {
 	   
 	   // console.log(key, _jsonObj[key]);
 
 
-	    dom = dom.add( makeBlock( _jsonObj[key], key ) );
-	    
+	    dom.append( makeBlock( _jsonObj[key], key, i, objSize ) );
+	   /*
+ 
 	    if (i != objSize) {
 	    	//console.log(i, objSize);
-			dom = dom.add('<input value="," class="inputTrigger" />');    
+			dom.append('<input value="," class="inputTrigger" />');    
 	    }
+*/
 
 	    i++;
 	});
 	
-	dom = dom.add('<input value="}" class="inputTrigger" />');
+	dom.append('<input value="}" class="inputTrigger" />');
 	
 	 
 	jQuery('#content_body').html('').append(dom);
@@ -686,16 +688,17 @@ var renderJsonFromObj = function (jsonobj) {
 	makeBlock
 */
 
-var makeBlock = function (obj, key) {
+var makeBlock = function (obj, key, i, objSize) {
 	//console.log(obj);
 	
-	var box = jQuery('<div />');
+	var box = jQuery('<tr />');
 	var content = jQuery();
 	
 	
 	
 	if ( jQuery.isArray(obj) ) {
 		//console.log('-> array');
+		/*
 		if (key) {
 			var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
 			content = content.add(domKey);
@@ -715,33 +718,98 @@ var makeBlock = function (obj, key) {
 		});
 		//content = span;
 		content = content.add('<input value="]" class="inputTrigger" />');
+		*/
+		
+		/*
+		var domKey = undefined;
+		if (key) {
+			domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+		}
+		
+*/
+		var span = jQuery('<table />');
+		var ia = 0;
+		var objSizea = Object.size(obj);
+		Object.keys(obj).forEach(function(key2) {
+			span.append( makeBlock( obj[key2], undefined, ia, objSizea ) );
+			ia++;
+		});
+
+		var dom = jQuery();
+		//var td_key = jQuery('<td>');
+		var td_value = jQuery('<td>');
+		
+		//td_key.append(domKey);
+		
+		td_value.append('<input value="[" class="inputTrigger" />');
+		
+		td_value.append(span);
+		td_value.append('<input value="]" class="inputTrigger" />');
+		
+	//	dom = dom.add(td_key).add(td_value);
+	
+		if (key) {
+			var td_key = jQuery('<td>');
+			var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+			td_key.append(domKey);
+			td_key.append('a');
+			dom = dom.add(td_key)
+		}
+		
+		
+		dom = dom.add(td_value);
+		
+		content = content.add(dom);
+		
+		
 		
 	} else if ( typeof obj === 'object' ) {
 		//console.log('-> obj');
+		
+		
+		
+		var span = jQuery('<table />');
+		var ia = 0;
+		var objSizea = Object.size(obj);
+		Object.keys(obj).forEach(function(key2) {
+			span.append( makeBlock( obj[key2], key2, ia, objSizea ) );
+			ia++;
+		});
+
+		var dom = jQuery();
+		
+		var td_value = jQuery('<td>');
+		
+		
+		
+		td_value.append('<input value="{" class="inputTrigger" />');
+		td_value.append(span);
+		td_value.append('<input value="}" class="inputTrigger" />');
+		
+
 		if (key) {
+			var td_key = jQuery('<td>');
 			var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
-			content = content.add(domKey);
+			td_key.append(domKey);
+			td_key.append('o');
+			dom = dom.add(td_key)
 		}
 		
-		content = content.add('<input value="{" class="inputTrigger" />');
-		var span = jQuery('<span />');
-		var i = 0;
-		var objSize = Object.size(obj);
-		Object.keys(obj).forEach(function(key2) {
-			span.append( makeBlock( obj[key2], key2 ) );
-			if (i != objSize) {
-				span.append('<input value="," class="inputTrigger" />');
-			}
-			i++;
-		});
+		dom = dom.add(td_value);
 		
-		span.append('<input value="}" class="inputTrigger" />');
-		content = content.add(span);
+		content = content.add(dom);
 		
 	} else {
 		//console.log('-> text');
 		content = content.add( getBoxInput(obj, key) );
+		
+		
+			
 		//content = content.add('<input value=",#" class="inputTrigger" />');
+	}
+	
+	if (i != objSize) {
+		content = content.add('<input value="," class="inputTrigger" />');
 	}
 	
 	//content = content.add('<input value="}" />');
@@ -759,19 +827,25 @@ var makeBlock = function (obj, key) {
 
 var getBoxInput = function(value, key) {
 	
-	//if (value) {
+
 	value = decodeURIComponent(value);
 	
 	var span = jQuery();
-	var domKey = undefined;
-	if (key) {
-		//console.log('->', key);
-		domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
-	}
+	
 	
 	var domValue = jQuery('<input />', {value: value, class: 'inputValue'}); 
 	
-	span = span.add(domKey).add(domValue);
+	
+	
+	//var domKey = undefined;
+	if (key) {
+		//console.log('->', key);
+		var domKey = jQuery('<input />', {value: key, class: 'inputKey'}); 
+		span = span.add( jQuery('<td>').append(domKey) );
+	}
+	
+	
+	span = span.add( jQuery('<td>').append(domValue) );
 	
 	span.on('change', function (e) {
 		
@@ -786,10 +860,8 @@ var getBoxInput = function(value, key) {
 	})
 	
 		
-		return span;
-	//}
+	return span;
 	
-
 }
 
 
