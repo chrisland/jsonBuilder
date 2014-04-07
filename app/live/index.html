@@ -17,33 +17,47 @@
 </head>
 <body style="-webkit-app-region: drag">
 <div id="toolbar" >
-	<button id="toolbar_new" class="menu_icons" >New</button>
-	<button id="toolbar_open" class="menu_icons">Open</button>
-	<button id="toolbar_save" class="menu_icons">Save</button>
-	<button id="toolbar_undo" class="menu_icons">Undo</button>
-	<button id="toolbar_redo" class="menu_icons">Redo</button>
+	<div class="leftside">
+		<button id="toolbar_new" class="" >New</button>
+		<button id="toolbar_open" class="">Open</button>
+		<button id="toolbar_save" class="">Save</button>
+		<button id="toolbar_undo" class="">Undo</button>
+		<button id="toolbar_redo" class="">Redo</button>
+	</div>
+	<div class="rightside">
+		close
+	</div>
+	<div style="clear:both;"></div>
 </div>
 
 <div class="page">
 <div id="page" >
+
 	<div id="textarea" class="side">
+		<div class="toolbar">
+			<button id="textarea_nice"></button>
+			<button id="textarea_encode"></button>
+		</div>
 		<div class="content">
-			<div class="toolbar">
-				<button id="textarea_nice">Nicecode</button>
-				<button id="textarea_encode">Encode</button>
-			</div>
 			<textarea id="textarea_jsonstring" readonly></textarea>
-			<div class="breaker"></div>
 		</div>
-	</div>
-	<div id="content" class="side">
-		<div class="content" id="content_body">
-		</div>
-	</div>
-	<div class="breaker"></div>
-</div>
-</div>
 	
+	</div>
+	
+	<div id="content" class="side">
+		<div class="toolbar">
+			<button id="json_del"></button>
+			<button id="json_dupli"></button>
+			<button id="json_insert"></button>
+			<button id="json_add"></button>
+		</div>
+		<div class="content" id="content_body"></div>
+	</div>
+	
+</div>
+</div>
+
+<div id="msgbox"></div>	
 
 <div class="system hidden">
 	<input type="file" id="system_openfile" name="" value="" accept=".json"/>
